@@ -25,7 +25,7 @@ jobs:
         name: Build and push
         uses: docker/build-push-action@v5
         with:
-          context: .
+          context: "{{defaultContext}}:"
           push: true
           tags: |
             ${{ github.repository_owner }}/ubuntu:latest
