@@ -19,7 +19,7 @@ jobs:
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
-          username: comorment
+          username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}      
       -
         name: Build and push
@@ -28,7 +28,8 @@ jobs:
           context: "{{defaultContext}}:"
           push: true
           tags: |
-            ${{ github.repository_owner }}/ubuntu:latest
-            ghcr.io/${{ github.repository_owner }}/ubuntu:latest
+            ${{ github.repository_owner }}/nothingtoseehere:latest
+            ghcr.io/${{ github.repository_owner }}/nothingtoseehere:latest
           file:
             ./Dockerfile
+          platforms: ${{ matrix.platforms }}
