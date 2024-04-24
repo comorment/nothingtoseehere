@@ -24,7 +24,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          apk add curl
+          apk add --no-cache curl
           VERSION="1.1.0"
           curl -LO "https://github.com/oras-project/oras/releases/download/v${VERSION}/oras_${VERSION}_linux_amd64.tar.gz"
           mkdir -p oras-install/
@@ -40,3 +40,4 @@ jobs:
       - name: Login and Deploy Container
         run: |
            echo ${{ secrets.GITHUB_TOKEN }} | oras login --username ${{ github.repository_owner }} --password-stdin ghcr.io
+           oras push ghcr.io/${{ github.repository_owner }}/nothingtoseehere:latest nothingtoseehere.sif:latest
