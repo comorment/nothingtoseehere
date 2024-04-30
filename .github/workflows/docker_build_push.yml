@@ -92,3 +92,4 @@ jobs:
             singularity pull nothingtoseehere.sif docker://"$tag"
             oras push ghcr.io/"$tag" --artifact-type application/vnd.acme.rocket.config nothingtoseehere.sif
           done
+        shell: bash
