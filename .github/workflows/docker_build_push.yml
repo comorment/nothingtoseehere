@@ -59,20 +59,6 @@ jobs:
         options: --privileged
     name: Pull-push Singularity Container
     steps:
-      - name: Docker meta
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          # list of Docker images to use as base name for tags
-          images: |
-            ghcr.io/${{ github.repository_owner }}/nothingtoseehere            
-          # generate Docker tags based on the following events/attributes
-          tags: |
-            type=ref,event=branch
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
-            type=semver,pattern={{major}}
-            type=sha 
       - name: Check out code for the container builds
         uses: actions/checkout@v4
       - name: Install dependencies
@@ -84,7 +70,15 @@ jobs:
           tar -zxf oras_${VERSION}_*.tar.gz -C oras-install/
           sudo mv oras-install/oras /usr/local/bin/
           rm -rf oras_${VERSION}_*.tar.gz oras-install/
-      - name: Pull, login and deploy container
+      - name: Docker meta 
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: |
+            ghcr.io/${{ github.repository_owner }}/nothingtoseehere            
+          tags: |
+            type=semver,pattern={{version}}
+      - name: Pull and push Singularity container
         run: |
           singularity pull nothingtoseehere.sif docker://${{ steps.meta.outputs.tags }}
           echo ${{ secrets.GITHUB_TOKEN }} | oras login --username ${{ github.repository_owner }} --password-stdin ghcr.io
