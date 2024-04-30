@@ -98,4 +98,3 @@ jobs:
           else
             echo "No tags found"
           fi
-        shell: bash
