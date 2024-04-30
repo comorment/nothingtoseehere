@@ -92,7 +92,7 @@ jobs:
             for tag in "${tags_array[@]}"; do
               echo "processing tag: $tag"
               singularity pull nothingtoseehere.sif docker://"$tag"
-              oras push ghcr.io/"$tag" --artifact-type application/vnd.acme.rocket.config nothingtoseehere.sif
+              oras push "$tag" --artifact-type application/vnd.acme.rocket.config nothingtoseehere.sif
             done
           else
             echo "No tags found"
