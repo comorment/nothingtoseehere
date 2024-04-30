@@ -85,7 +85,7 @@ jobs:
         run: |
           tags="${{ steps.meta.outputs.tags }}"
           if [ -n "$tags" ]; then
-            IFS=$'\n' read -r -a tags_array <<< "$tags"
+            IFS=$'\n' read -r -d '' -a tags_array <<< "$tags"
             echo "Number of tags: ${#tag_array[@]}"
             echo "$tags"
             echo ${{ secrets.GITHUB_TOKEN }} | oras login --username ${{ github.repository_owner }} --password-stdin ghcr.io
