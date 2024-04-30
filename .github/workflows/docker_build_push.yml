@@ -84,12 +84,17 @@ jobs:
       - name: Pull and push Singularity container
         run: |
           tags="${{ steps.meta.outputs.tags }}"
-          IFS=$'\n' read -r -d '' -a tags_array <<< "$tags"
-          echo "$tags"
-          echo ${{ secrets.GITHUB_TOKEN }} | oras login --username ${{ github.repository_owner }} --password-stdin ghcr.io
-          for tag in "${tags_array[@]}"; do
-            echo "processing: " "$tag"
-            singularity pull nothingtoseehere.sif docker://"$tag"
-            oras push ghcr.io/"$tag" --artifact-type application/vnd.acme.rocket.config nothingtoseehere.sif
-          done
+          if [ -n "$tags" ]; then
+            IFS=$'\n' read -r -d '' -a tags_array <<< "$tags"
+            echo "Number of tags: ${#tag_array[@]}"
+            echo "$tags"
+            echo ${{ secrets.GITHUB_TOKEN }} | oras login --username ${{ github.repository_owner }} --password-stdin ghcr.io
+            for tag in "${tags_array[@]}"; do
+              echo "processing tag: $tag"
+              singularity pull nothingtoseehere.sif docker://"$tag"
+              oras push ghcr.io/"$tag" --artifact-type application/vnd.acme.rocket.config nothingtoseehere.sif
+            done
+          else
+            echo "No tags found"
+          fi
         shell: bash
