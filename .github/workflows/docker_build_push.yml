@@ -77,7 +77,8 @@ jobs:
           images: |
             ghcr.io/${{ github.repository_owner }}/nothingtoseehere            
           tags: |
-            type=sha     
+            type=semver,pattern={{version}}
+            type=sha   
       - name: Pull and push Singularity container
         run: |
           singularity pull nothingtoseehere.sif docker://${{ steps.meta.outputs.tags }}
