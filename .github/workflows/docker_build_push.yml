@@ -83,10 +83,11 @@ jobs:
             type=sha   
       - name: Pull and push Singularity container
         run: |
-          echo ${{ steps.meta.outputs.tags }}
-          tag=${{ steps.meta.outputs.tags[0] }}
-          echo $tag
+          tags="${{ steps.meta.outputs.tags }}"
+          IFS=$'\n' read -r -a tag_array <<< "$tags"
+          for tag in "${tag_array[@]}"
           do
+            echo $tag
             singularity pull nothingtoseehere.sif docker://ghcr.io/${{ github.repository_owner }}/nothingtoseehere:$tag
             echo ${{ secrets.GITHUB_TOKEN }} | oras login --username ${{ github.repository_owner }} --password-stdin ghcr.io
             oras push ghcr.io/${{ github.repository_owner }}/nothingtoseehere:$tag --artifact-type application/vnd.acme.rocket.config nothingtoseehere.sif
