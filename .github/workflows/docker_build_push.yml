@@ -85,8 +85,7 @@ jobs:
         run: |
           tags="${{ steps.meta.outputs.tags }}"
           echo $tags
-          IFS=$'\n' read -r -a tag_array <<< "$tags"
-          for tag in "${tag_array[@]}"
+          for tag in "${tags[@]}"
           do
             echo $tag
             singularity pull nothingtoseehere.sif docker://ghcr.io/${{ github.repository_owner }}/nothingtoseehere:$tag
