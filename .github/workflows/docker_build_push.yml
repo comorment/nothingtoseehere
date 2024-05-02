@@ -86,16 +86,22 @@ jobs:
           tags="${{ steps.meta.outputs.tags }}"
           echo "$tags"
           echo $SHELL
-          if [ -n "$tags" ]; then
-            IFS=$'\n' read -r -d '' -a tags_array <<< "$tags"
-            echo "Number of tags: ${#tags_array[@]}"
-            echo ${{ secrets.GITHUB_TOKEN }} | oras login --username ${{ github.repository_owner }} --password-stdin ghcr.io
-            for tag in "${tags_array[@]}"; do
-              echo "processing tag: $tag"
-              singularity pull nothingtoseehere.sif docker://"$tag"
-              oras push "$tag" --artifact-type application/vnd.acme.rocket.config nothingtoseehere.sif
-            done
-          else
-            echo "No tags found"
-          fi
-        shell: bash
+          ## IFS=$'\n' read -r -d '' -a tags_array <<< "$tags"
+          ## echo "Number of tags: ${#tags_array[@]}"
+          # Create an empty array (in POSIX shell represented by a list)
+          tags_array=
+          # Read each line from tags and append to the array
+          # Note: POSIX shell doesn't support arrays like bash does, so we use a space-separated list instead.
+          old_ifs="$IFS"
+          IFS=$'\n'
+          for tag in $tags; do
+              tags_array="$tags_array $tag"
+          done
+          IFS="$old_ifs"
+          echo ${{ secrets.GITHUB_TOKEN }} | oras login --username ${{ github.repository_owner }} --password-stdin ghcr.io
+          for tag in "${tags_array[@]}"; do
+            echo "processing tag: $tag"
+            singularity pull nothingtoseehere.sif docker://"$tag"
+            oras push "$tag" --artifact-type application/vnd.acme.rocket.config nothingtoseehere.sif
+          done
+        shell: sh
