@@ -84,14 +84,7 @@ jobs:
       - name: Pull and push Singularity container
         run: |
           tags="${{ steps.meta.outputs.tags }}"
-          echo "$tags"
-          echo $SHELL
-          ## IFS=$'\n' read -r -d '' -a tags_array <<< "$tags"
-          ## echo "Number of tags: ${#tags_array[@]}"
-          # Create an empty array (in POSIX shell represented by a list)
           tags_array=
-          # Read each line from tags and append to the array
-          # Note: POSIX shell doesn't support arrays like bash does, so we use a space-separated list instead.
           old_ifs="$IFS"
           IFS=$'\n'
           for tag in $tags; do
@@ -103,5 +96,6 @@ jobs:
             echo "processing tag: $tag"
             singularity pull nothingtoseehere.sif docker://"$tag"
             oras push "$tag" --artifact-type application/vnd.acme.rocket.config nothingtoseehere.sif
+            rm nothingtoseehere.sif
           done
         shell: sh
