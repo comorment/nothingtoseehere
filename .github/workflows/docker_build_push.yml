@@ -84,11 +84,11 @@ jobs:
       - name: Pull and push Singularity container
         run: |
           tags="${{ steps.meta.outputs.tags }}"
-          echo "$tags"
+          echo "$tags
+          echo $SHELL
           if [ -n "$tags" ]; then
             IFS=$'\n' read -r -d '' -a tags_array <<< "$tags"
             echo "Number of tags: ${#tags_array[@]}"
-            echo "$tags"
             echo ${{ secrets.GITHUB_TOKEN }} | oras login --username ${{ github.repository_owner }} --password-stdin ghcr.io
             for tag in "${tags_array[@]}"; do
               echo "processing tag: $tag"
@@ -98,3 +98,4 @@ jobs:
           else
             echo "No tags found"
           fi
+        shell: bash
