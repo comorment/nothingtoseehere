@@ -44,7 +44,7 @@ jobs:
           echo ${{ secrets.GITHUB_TOKEN }} | oras login --username ${{ github.repository_owner }} --password-stdin ghcr.io
           for tag in $tags_array; do
             echo "processing tag: $tag"
-            docker run --platform=linux/amd64 --rm --privileged -v $(pwd):/work kaczmarj/apptainer build nothingtoseehere.sif docker://"$tag"
+            docker run --rm --privileged -v $(pwd):/work kaczmarj/apptainer build nothingtoseehere.sif docker://"$tag"
             # singularity pull nothingtoseehere.sif docker://"$tag"
             # oras push "$tag" --artifact-type application/vnd.acme.rocket.config nothingtoseehere.sif
             rm nothingtoseehere.sif
