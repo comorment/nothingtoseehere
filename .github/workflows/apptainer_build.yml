@@ -28,6 +28,9 @@ jobs:
             type=ref,event=branch
             type=sha
             type=raw,value=latest,enable={{is_default_branch}}
+      - name: Get Apptainer
+        run: |
+          docker pull kaczmarj/apptainer:latest
       - name: Build and push Apptainer container
         run: |
           tags="${{ steps.meta.outputs.tags }}"
