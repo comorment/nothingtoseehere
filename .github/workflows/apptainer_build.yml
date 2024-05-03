@@ -36,7 +36,8 @@ jobs:
           echo "$tags"
           for tag in $tags; do
             echo "processing tag: $tag"
-            docker run --rm --privileged -v $(pwd):/work kaczmarj/apptainer build nothingtoseehere.sif docker://"$tag"
+            docker pull "$tag"
+            docker run --rm --privileged -v $(pwd):/work kaczmarj/apptainer build nothingtoseehere.sif docker-daemon://"$tag"
             # oras push "$tag" --artifact-type application/vnd.acme.rocket.config nothingtoseehere.sif
             rm nothingtoseehere.sif
           done
