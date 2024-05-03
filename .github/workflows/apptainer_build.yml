@@ -31,17 +31,10 @@ jobs:
       - name: Build and push Apptainer container
         run: |
           tags="${{ steps.meta.outputs.tags }}"
-          tags_array=
-          old_ifs="$IFS"
-          IFS=$'\n'
-          for tag in $tags; do
-              tags_array="$tags_array $tag"
-          done
-          IFS="$old_ifs"
           echo ${{ secrets.GITHUB_TOKEN }} | oras login --username ${{ github.repository_owner }} --password-stdin ghcr.io
           docker pull kaczmarj/apptainer:latest
-          echo "$tags_array"
-          for tag in $tags_array; do
+          echo "$tags"
+          for tag in $tags; do
             echo "processing tag: $tag"
             sleep 1
             # docker run --rm --privileged -v $(pwd):/work kaczmarj/apptainer build nothingtoseehere.sif docker://"$tag"
