@@ -85,7 +85,6 @@ jobs:
           docker run --rm --privileged -v $(pwd):/work kaczmarj/apptainer build nothingtoseehere.sif docker://"$first_tag"
           oras push "$csv_tags" --artifact-type application/vnd.acme.rocket.config nothingtoseehere.sif
           rm nothingtoseehere.sif
-          done
         shell: sh
 
   build-push-singularity-container:
