@@ -13,7 +13,7 @@ jobs:
     permissions:
       contents: read
       packages: write
-    name: Pull Apptainer Container
+    name: Build Apptainer Container
     steps:
       - name: Check out code for the container builds
         uses: actions/checkout@v4
@@ -28,7 +28,7 @@ jobs:
             type=ref,event=branch
             type=sha
             type=raw,value=latest,enable={{is_default_branch}}
-      - name: Pull and push Singularity container
+      - name: Build and push Apptainer container
         run: |
           tags="${{ steps.meta.outputs.tags }}"
           tags_array=
