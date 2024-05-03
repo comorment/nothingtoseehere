@@ -28,9 +28,6 @@ jobs:
             type=ref,event=branch
             type=sha
             type=raw,value=latest,enable={{is_default_branch}}
-      - name: Get Apptainer
-        run: |
-          docker pull kaczmarj/apptainer:latest
       - name: Build and push Apptainer container
         run: |
           tags="${{ steps.meta.outputs.tags }}"
@@ -42,6 +39,8 @@ jobs:
           done
           IFS="$old_ifs"
           echo ${{ secrets.GITHUB_TOKEN }} | oras login --username ${{ github.repository_owner }} --password-stdin ghcr.io
+          docker pull kaczmarj/apptainer:latest
+          echo "$tags_array"
           for tag in $tags_array; do
             echo "processing tag: $tag"
             sleep 1
