@@ -83,58 +83,6 @@ jobs:
           echo ${{ secrets.GITHUB_TOKEN }} | oras login --username ${{ github.repository_owner }} --password-stdin ghcr.io
           docker pull kaczmarj/apptainer:latest
           docker run --rm --privileged -v $(pwd):/work kaczmarj/apptainer build nothingtoseehere.sif docker://"$first_tag"
-          oras push "$csv_tags" --artifact-type application/vnd.acme.rocket.config nothingtoseehere.sif
+          oras push "$csv_tags" nothingtoseehere.sif
           rm nothingtoseehere.sif
-        shell: sh
-
-  build-push-singularity-container:
-    needs: docker
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-    container:
-        image: quay.io/singularity/singularity:v4.1.0
-        options: --privileged
-    name: Pull-push Singularity Container
-    steps:
-      - name: Check out code for the container builds
-        uses: actions/checkout@v4
-      - name: Install dependencies
-        run: |
-          apk add --no-cache curl
-          VERSION="1.1.0"
-          curl -LO "https://github.com/oras-project/oras/releases/download/v${VERSION}/oras_${VERSION}_linux_amd64.tar.gz"
-          mkdir -p oras-install/
-          tar -zxf oras_${VERSION}_*.tar.gz -C oras-install/
-          sudo mv oras-install/oras /usr/local/bin/
-          rm -rf oras_${VERSION}_*.tar.gz oras-install/
-      - name: Docker meta 
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: |
-            ghcr.io/${{ github.repository_owner }}/nothingtoseehere            
-          tags: |
-            # type=semver,pattern={{version}}
-            # type=ref,event=branch
-            # type=sha
-            # type=raw,value=latest,enable={{is_default_branch}}
-      - name: Pull and push Singularity container
-        run: |
-          tags="${{ steps.meta.outputs.tags }}"
-          tags_array=
-          old_ifs="$IFS"
-          IFS=$'\n'
-          for tag in $tags; do
-              tags_array="$tags_array $tag"
-          done
-          IFS="$old_ifs"
-          echo ${{ secrets.GITHUB_TOKEN }} | oras login --username ${{ github.repository_owner }} --password-stdin ghcr.io
-          for tag in $tags_array; do
-            echo "processing tag: $tag"
-            singularity pull nothingtoseehere.sif docker://"$tag"
-            oras push "$tag" --artifact-type application/vnd.acme.rocket.config nothingtoseehere.sif
-            rm nothingtoseehere.sif
-          done
         shell: sh
