@@ -83,13 +83,10 @@ jobs:
           IFS= read -r first_tag <<EOF
           $tags
           EOF
-          # push_tags="$(printf $csv_tags | sed -e "s/nothingtoseehere/nothingtoseehere_sif/g")"
-          push_tag="$(printf $first_tag | sed -e "s/nothingtoseehere/nothingtoseehere_sif/g")"
-          # echo ${{ secrets.GITHUB_TOKEN }} | oras login --username ${{ github.repository_owner }} --password-stdin ghcr.io
+          push_tags="$(printf $csv_tags | sed -e "s/nothingtoseehere/nothingtoseehere_sif/g")"
+          echo ${{ secrets.GITHUB_TOKEN }} | oras login --username ${{ github.repository_owner }} --password-stdin ghcr.io
           docker pull kaczmarj/apptainer:latest
           docker run --rm --privileged -v $(pwd):/work kaczmarj/apptainer build nothingtoseehere.sif docker://"$first_tag"
-          # oras push "$push_tags" nothingtoseehere.sif
-          # echo ${{ secrets.GITHUB_TOKEN }} | 
-          docker run --rm --privileged --entrypoint /bin/sh -v $(pwd):/work kaczmarj/apptainer -c "apptainer remote login -u ${{ github.repository_owner }} -p ${{ secrets.GITHUB_TOKEN }} oras://ghcr.io && apptainer push nothingtoseehere.sif oras://$push_tag"
+          oras push "$push_tags" nothingtoseehere.sif
           rm nothingtoseehere.sif
         shell: sh
