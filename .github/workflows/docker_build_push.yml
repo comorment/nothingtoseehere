@@ -91,7 +91,7 @@ jobs:
           docker pull kaczmarj/apptainer:latest
           docker run --rm --privileged -v $(pwd):/work kaczmarj/apptainer build nothingtoseehere.sif docker://"$first_tag"
           # oras push "$push_tags" nothingtoseehere.sif
-          echo ${{ secrets.GITHUB_TOKEN }} | docker run --rm --privileged -v $(pwd):/work kaczmarj/apptainer remote login --u ${{ github.repository_owner }} --password-stdin oras://ghcr.io
+          echo ${{ secrets.GITHUB_TOKEN }} | docker run --rm --privileged -v $(pwd):/work kaczmarj/apptainer remote login -u ${{ github.repository_owner }} --password-stdin oras://ghcr.io
           docker run --rm --privileged -v $(pwd):/work kaczmarj/apptainer push nothingtoseehere.sif oras://"$first_tag"
           rm nothingtoseehere.sif
         shell: sh
