@@ -28,6 +28,11 @@ jobs:
             type=semver,pattern={{major}}
             type=sha
             type=raw,value=latest,enable={{is_default_branch}} 
+          labels: |
+            org.opencontainers.image.source=https://github.com/comorment/nothingtoseehere
+            org.opencontainers.image.description=NothingToSeeHere
+            org.opencontainers.image.licenses=GPL-3.0
+            org.opencontainers.image.authors=https://github.com/comorment/nothingtoseehere/graphs/contributors
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
       - name: Set up Docker Buildx
@@ -49,7 +54,6 @@ jobs:
           file:
             ./Dockerfile
           platforms: linux/amd64,linux/arm64
-          outputs: type=image,name=target,annotation-index.org.opencontainers.image.description=NothingToSeeHere
 
   build-apptainer-container:
     needs: docker
@@ -87,7 +91,7 @@ jobs:
           docker pull kaczmarj/apptainer:latest
           docker run --rm --privileged -v $(pwd):/work kaczmarj/apptainer build nothingtoseehere.sif docker://"$first_tag"
           # oras push "$push_tags" nothingtoseehere.sif
-          echo ${{ secrets.GITHUB_TOKEN }} | docker login --username ${{ github.repository_owner }} --password-stdin ghcr.io
-          docker run --rm --privileged -v $(pwd):/work kaczmarj/apptainer push nothingtoseehere.sif oras://"$push_tags"
+          echo ${{ secrets.GITHUB_TOKEN }} | docker run --rm --privileged -v $(pwd):/work kaczmarj/apptainer remote login --u ${{ github.repository_owner }} --password-stdin oras://ghcr.io
+          docker run --rm --privileged -v $(pwd):/work kaczmarj/apptainer push nothingtoseehere.sif oras://"$first_tag"
           rm nothingtoseehere.sif
         shell: sh
