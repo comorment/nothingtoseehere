@@ -49,6 +49,7 @@ jobs:
           file:
             ./Dockerfile
           platforms: linux/amd64,linux/arm64
+          outputs: type=image,name=target,annotation-index.org.opencontainers.image.description="NothingToSeeHere"
 
   build-apptainer-container:
     needs: docker
@@ -82,9 +83,11 @@ jobs:
           echo "CSV-tags are: $csv_tags"
           push_tags="$(printf $csv_tags | sed -e "s/nothingtoseehere/nothingtoseehere_sif/g")"
           echo "PUSH-tags are: $push_tags"
-          echo ${{ secrets.GITHUB_TOKEN }} | oras login --username ${{ github.repository_owner }} --password-stdin ghcr.io
+          # echo ${{ secrets.GITHUB_TOKEN }} | oras login --username ${{ github.repository_owner }} --password-stdin ghcr.io
           docker pull kaczmarj/apptainer:latest
           docker run --rm --privileged -v $(pwd):/work kaczmarj/apptainer build nothingtoseehere.sif docker://"$first_tag"
-          oras push "$push_tags" nothingtoseehere.sif
+          # oras push "$push_tags" nothingtoseehere.sif
+          echo ${{ secrets.GITHUB_TOKEN }} | docker login --username ${{ github.repository_owner }} --password-stdin ghcr.io
+          docker run --rm --privileged -v $(pwd):/work kaczmarj/apptainer push nothingtoseehere.sif oras://"$push_tags"
           rm nothingtoseehere.sif
         shell: sh
