@@ -83,6 +83,6 @@ jobs:
           echo ${{ secrets.GITHUB_TOKEN }} | oras login --username ${{ github.repository_owner }} --password-stdin ghcr.io
           docker pull kaczmarj/apptainer:latest
           docker run --rm --privileged -v $(pwd):/work kaczmarj/apptainer build nothingtoseehere.sif docker://"$first_tag"
-          oras push "$csv_tags" nothingtoseehere.sif
+          oras push --export-manifest /dev/null "$csv_tags" nothingtoseehere.sif
           rm nothingtoseehere.sif
         shell: sh
