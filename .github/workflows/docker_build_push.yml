@@ -80,11 +80,11 @@ jobs:
           EOF
           echo "The first tag is: $first_tag"
           echo "CSV-tags are: $csv_tags"
-          pushtags="$(printf $csvtags | sed -e "s/nothingtoseehere/nothingtoseehere_sif/g")"
-          echo "PUSH-tags are: $pushtags"
+          push_tags="$(printf $csv_tags | sed -e "s/nothingtoseehere/nothingtoseehere_sif/g")"
+          echo "PUSH-tags are: $push_tags"
           echo ${{ secrets.GITHUB_TOKEN }} | oras login --username ${{ github.repository_owner }} --password-stdin ghcr.io
           docker pull kaczmarj/apptainer:latest
           docker run --rm --privileged -v $(pwd):/work kaczmarj/apptainer build nothingtoseehere.sif docker://"$first_tag"
-          oras push "$pushtags" nothingtoseehere.sif
+          oras push "$push_tags" nothingtoseehere.sif
           rm nothingtoseehere.sif
         shell: sh
